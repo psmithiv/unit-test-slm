@@ -105,6 +105,7 @@ def scrape_repository(
     repository_name: str,
     repository_url: str,
     revision: str,
+    license_spdx_id: str | None = None,
 ) -> dict[str, object]:
     repo_root = repo_root.resolve()
     pairs = pair_sources_with_tests(repo_root)
@@ -114,6 +115,7 @@ def scrape_repository(
             "name": repository_name,
             "url": repository_url,
             "revision": revision,
+            "license_spdx_id": license_spdx_id,
             "root": str(repo_root),
         },
         "pair_count": len(pairs),
@@ -125,6 +127,9 @@ def scrape_repository(
                     "repository_name": repository_name,
                     "repository_url": repository_url,
                     "revision": revision,
+                    "license_spdx_id": license_spdx_id,
+                    "source_path": pair.source_path,
+                    "test_paths": pair.test_paths,
                 },
             }
             for pair in pairs
