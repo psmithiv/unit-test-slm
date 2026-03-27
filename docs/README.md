@@ -15,5 +15,6 @@ pipeline is implemented ticket by ticket.
 - `docs/acquisition/repository-selection-criteria.md`: repository inclusion and exclusion rules
 - `docs/acquisition/discovery-workflow.md`: GitHub discovery workflow and manifest shape
 - `docs/acquisition/license-and-provenance.md`: license gating and provenance rules
+- `docs/acquisition/quality-scoring-and-filtering.md`: repository quality scoring rules
 - `docs/acquisition/source-test-pair-scraper.md`: raw pairing manifest and scraper behavior
 - `config/repository_selection_criteria.json`: machine-readable acquisition criteria

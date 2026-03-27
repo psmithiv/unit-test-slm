@@ -11,6 +11,7 @@ from unit_test_slm.acquisition.discovery import (
     run_discovery,
 )
 from unit_test_slm.acquisition.governance import enforce_license_policy
+from unit_test_slm.acquisition.quality import apply_quality_filter
 from unit_test_slm.acquisition.scraper import scrape_repository
 
 
@@ -58,6 +59,18 @@ def build_parser() -> argparse.ArgumentParser:
     license_parser.add_argument("--manifest", type=Path, required=True)
     license_parser.add_argument("--output", type=Path, required=True)
 
+    quality_parser = subparsers.add_parser(
+        "score-discovery",
+        help="Score and filter repositories from a discovery manifest",
+    )
+    quality_parser.add_argument(
+        "--criteria",
+        type=Path,
+        default=Path("config/repository_selection_criteria.json"),
+    )
+    quality_parser.add_argument("--manifest", type=Path, required=True)
+    quality_parser.add_argument("--output", type=Path, required=True)
+
     scrape_parser = subparsers.add_parser(
         "scrape-repo", help="Extract raw source/test pairs from a checked-out repository"
     )
@@ -90,6 +103,14 @@ def main() -> int:
         criteria = json.loads(args.criteria.read_text(encoding="utf-8"))
         manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
         filtered = enforce_license_policy(manifest, criteria)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(filtered, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "score-discovery":
+        criteria = json.loads(args.criteria.read_text(encoding="utf-8"))
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        filtered = apply_quality_filter(manifest, criteria)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(filtered, indent=2) + "\n", encoding="utf-8")
         return 0

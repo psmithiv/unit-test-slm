@@ -23,10 +23,20 @@
   },
   "quality_preferences": {
     "minimum_stars": 5,
+    "minimum_forks": 1,
     "prefer_recent_push_within_days": 730,
     "prefer_assertion_heavy_tests": true,
     "prefer_clear_source_and_test_separation": true,
-    "prefer_explicit_jest_dependency": true
+    "prefer_explicit_jest_dependency": true,
+    "scoring": {
+      "minimum_score": 0.55,
+      "weights": {
+        "stars": 0.4,
+        "forks": 0.15,
+        "recency": 0.25,
+        "topic_alignment": 0.2
+      }
+    }
   },
   "license_policy": {
     "allowlist": [
@@ -51,7 +61,8 @@
     "generated_tests_only",
     "snapshot_only_tests",
     "ambiguous_source_test_pairing",
-    "blocked_or_missing_license"
+    "blocked_or_missing_license",
+    "quality_score_below_threshold"
   ],
   "captured_metadata_fields": [
     "full_name",
