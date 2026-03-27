@@ -12,3 +12,11 @@ The current in-repo project docs live under `docs/`.
 - `docs/README.md`
 - `docs/foundation/v1-task-contract.md`
 - `docs/acquisition/repository-selection-criteria.md`
+
+## Local Validation
+
+Run the current Python test suite with:
+
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests
+```

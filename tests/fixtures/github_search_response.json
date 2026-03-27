@@ -1,0 +1,60 @@
+{
+  "total_count": 3,
+  "items": [
+    {
+      "full_name": "acme/ts-jest-utils",
+      "html_url": "https://github.com/acme/ts-jest-utils",
+      "default_branch": "main",
+      "stargazers_count": 42,
+      "forks_count": 5,
+      "language": "TypeScript",
+      "license": {
+        "spdx_id": "MIT"
+      },
+      "topics": [
+        "jest",
+        "typescript",
+        "testing"
+      ],
+      "updated_at": "2026-03-20T08:00:00Z",
+      "pushed_at": "2026-03-21T08:00:00Z",
+      "archived": false
+    },
+    {
+      "full_name": "acme/archived-ts-jest",
+      "html_url": "https://github.com/acme/archived-ts-jest",
+      "default_branch": "main",
+      "stargazers_count": 30,
+      "forks_count": 3,
+      "language": "TypeScript",
+      "license": {
+        "spdx_id": "MIT"
+      },
+      "topics": [
+        "jest",
+        "typescript"
+      ],
+      "updated_at": "2025-01-10T08:00:00Z",
+      "pushed_at": "2025-01-11T08:00:00Z",
+      "archived": true
+    },
+    {
+      "full_name": "acme/javascript-only",
+      "html_url": "https://github.com/acme/javascript-only",
+      "default_branch": "main",
+      "stargazers_count": 12,
+      "forks_count": 2,
+      "language": "JavaScript",
+      "license": {
+        "spdx_id": "MIT"
+      },
+      "topics": [
+        "jest",
+        "javascript"
+      ],
+      "updated_at": "2026-03-15T08:00:00Z",
+      "pushed_at": "2026-03-16T08:00:00Z",
+      "archived": false
+    }
+  ]
+}

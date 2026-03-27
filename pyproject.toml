@@ -1,0 +1,15 @@
+[project]
+name = "unit-test-slm"
+version = "0.1.0"
+description = "Pipeline for training a small language model for one language/framework pair at a time."
+requires-python = ">=3.12"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

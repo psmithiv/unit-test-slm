@@ -13,4 +13,5 @@ pipeline is implemented ticket by ticket.
 ## Acquisition
 
 - `docs/acquisition/repository-selection-criteria.md`: repository inclusion and exclusion rules
+- `docs/acquisition/discovery-workflow.md`: GitHub discovery workflow and manifest shape
 - `config/repository_selection_criteria.json`: machine-readable acquisition criteria
