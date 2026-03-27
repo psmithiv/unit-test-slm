@@ -8,7 +8,4 @@ pipeline is implemented ticket by ticket.
 - `docs/foundation/v1-task-contract.md`: V1 task boundary for `TypeScript -> Jest`
 - `docs/foundation/base-model-shortlist.md`: initial small-model candidates for V1
 - `docs/foundation/mlx-qlora-feasibility.md`: official MLX training-path findings
-
-Future foundation documents will cover:
-
-- the direct-generation versus `TEST_SPEC` decision
+- `docs/foundation/generation-strategy-decision.md`: direct output vs `TEST_SPEC`
