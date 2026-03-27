@@ -10,6 +10,7 @@ from unit_test_slm.acquisition.discovery import (
     compare_repository_manifests,
     run_discovery,
 )
+from unit_test_slm.acquisition.governance import enforce_license_policy
 from unit_test_slm.acquisition.scraper import scrape_repository
 
 
@@ -45,6 +46,18 @@ def build_parser() -> argparse.ArgumentParser:
     compare_parser.add_argument("baseline", type=Path)
     compare_parser.add_argument("candidate", type=Path)
 
+    license_parser = subparsers.add_parser(
+        "enforce-license-policy",
+        help="Filter a discovery manifest against the configured license policy",
+    )
+    license_parser.add_argument(
+        "--criteria",
+        type=Path,
+        default=Path("config/repository_selection_criteria.json"),
+    )
+    license_parser.add_argument("--manifest", type=Path, required=True)
+    license_parser.add_argument("--output", type=Path, required=True)
+
     scrape_parser = subparsers.add_parser(
         "scrape-repo", help="Extract raw source/test pairs from a checked-out repository"
     )
@@ -52,6 +65,7 @@ def build_parser() -> argparse.ArgumentParser:
     scrape_parser.add_argument("--repository-name", required=True)
     scrape_parser.add_argument("--repository-url", required=True)
     scrape_parser.add_argument("--revision", required=True)
+    scrape_parser.add_argument("--license-spdx-id", default=None)
     scrape_parser.add_argument("--output", type=Path, required=True)
 
     return parser
@@ -72,12 +86,21 @@ def main() -> int:
         print(json.dumps(compare_repository_manifests(baseline, candidate), indent=2))
         return 0
 
+    if args.command == "enforce-license-policy":
+        criteria = json.loads(args.criteria.read_text(encoding="utf-8"))
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        filtered = enforce_license_policy(manifest, criteria)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(filtered, indent=2) + "\n", encoding="utf-8")
+        return 0
+
     if args.command == "scrape-repo":
         manifest = scrape_repository(
             args.repo_root,
             repository_name=args.repository_name,
             repository_url=args.repository_url,
             revision=args.revision,
+            license_spdx_id=args.license_spdx_id,
         )
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

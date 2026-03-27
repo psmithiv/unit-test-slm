@@ -24,10 +24,12 @@ class SourceTestPairScraperTests(unittest.TestCase):
             repository_name="acme/sample-repo",
             repository_url="https://github.com/acme/sample-repo",
             revision="abc123",
+            license_spdx_id="MIT",
         )
         self.assertEqual(manifest["repository"]["name"], "acme/sample-repo")
         self.assertEqual(manifest["pair_count"], 2)
         self.assertEqual(manifest["pairs"][0]["provenance"]["revision"], "abc123")
+        self.assertEqual(manifest["pairs"][0]["provenance"]["license_spdx_id"], "MIT")
 
 
 if __name__ == "__main__":
