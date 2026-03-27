@@ -10,6 +10,7 @@ from unit_test_slm.acquisition.discovery import (
     compare_repository_manifests,
     run_discovery,
 )
+from unit_test_slm.acquisition.scraper import scrape_repository
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -44,6 +45,15 @@ def build_parser() -> argparse.ArgumentParser:
     compare_parser.add_argument("baseline", type=Path)
     compare_parser.add_argument("candidate", type=Path)
 
+    scrape_parser = subparsers.add_parser(
+        "scrape-repo", help="Extract raw source/test pairs from a checked-out repository"
+    )
+    scrape_parser.add_argument("--repo-root", type=Path, required=True)
+    scrape_parser.add_argument("--repository-name", required=True)
+    scrape_parser.add_argument("--repository-url", required=True)
+    scrape_parser.add_argument("--revision", required=True)
+    scrape_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -60,6 +70,17 @@ def main() -> int:
         baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
         candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
         print(json.dumps(compare_repository_manifests(baseline, candidate), indent=2))
+        return 0
+
+    if args.command == "scrape-repo":
+        manifest = scrape_repository(
+            args.repo_root,
+            repository_name=args.repository_name,
+            repository_url=args.repository_url,
+            revision=args.revision,
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
