@@ -9,3 +9,8 @@ pipeline is implemented ticket by ticket.
 - `docs/foundation/base-model-shortlist.md`: initial small-model candidates for V1
 - `docs/foundation/mlx-qlora-feasibility.md`: official MLX training-path findings
 - `docs/foundation/generation-strategy-decision.md`: direct output vs `TEST_SPEC`
+
+## Acquisition
+
+- `docs/acquisition/repository-selection-criteria.md`: repository inclusion and exclusion rules
+- `config/repository_selection_criteria.json`: machine-readable acquisition criteria

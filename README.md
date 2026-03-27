@@ -11,3 +11,4 @@ The current in-repo project docs live under `docs/`.
 
 - `docs/README.md`
 - `docs/foundation/v1-task-contract.md`
+- `docs/acquisition/repository-selection-criteria.md`
