@@ -13,6 +13,7 @@ from unit_test_slm.acquisition.discovery import (
 from unit_test_slm.acquisition.governance import enforce_license_policy
 from unit_test_slm.acquisition.quality import apply_quality_filter
 from unit_test_slm.acquisition.scraper import scrape_repository
+from unit_test_slm.dataset.manifest import build_dataset_manifest, validate_dataset_manifest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -81,6 +82,13 @@ def build_parser() -> argparse.ArgumentParser:
     scrape_parser.add_argument("--license-spdx-id", default=None)
     scrape_parser.add_argument("--output", type=Path, required=True)
 
+    dataset_parser = subparsers.add_parser(
+        "build-dataset-manifest",
+        help="Convert raw source/test pairs into the curated dataset manifest",
+    )
+    dataset_parser.add_argument("--raw-manifest", type=Path, required=True)
+    dataset_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -123,6 +131,16 @@ def main() -> int:
             revision=args.revision,
             license_spdx_id=args.license_spdx_id,
         )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "build-dataset-manifest":
+        raw_manifest = json.loads(args.raw_manifest.read_text(encoding="utf-8"))
+        manifest = build_dataset_manifest(raw_manifest)
+        errors = validate_dataset_manifest(manifest)
+        if errors:
+            parser.error(f"invalid dataset manifest: {', '.join(errors)}")
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         return 0

@@ -18,3 +18,7 @@ pipeline is implemented ticket by ticket.
 - `docs/acquisition/quality-scoring-and-filtering.md`: repository quality scoring rules
 - `docs/acquisition/source-test-pair-scraper.md`: raw pairing manifest and scraper behavior
 - `config/repository_selection_criteria.json`: machine-readable acquisition criteria
+
+## Dataset
+
+- `docs/dataset/dataset-manifest-schema.md`: stable curated example manifest
