@@ -1,0 +1,68 @@
+{
+  "version": "1.0.0",
+  "target_pair": {
+    "language": "TypeScript",
+    "framework": "Jest"
+  },
+  "required_signals": {
+    "language_extensions": [
+      ".ts",
+      ".tsx"
+    ],
+    "test_file_patterns": [
+      "*.test.ts",
+      "*.spec.ts",
+      "*.test.tsx",
+      "*.spec.tsx"
+    ],
+    "dependency_markers": [
+      "jest",
+      "@jest/globals",
+      "ts-jest"
+    ]
+  },
+  "quality_preferences": {
+    "minimum_stars": 5,
+    "prefer_recent_push_within_days": 730,
+    "prefer_assertion_heavy_tests": true,
+    "prefer_clear_source_and_test_separation": true,
+    "prefer_explicit_jest_dependency": true
+  },
+  "license_policy": {
+    "allowlist": [
+      "MIT",
+      "Apache-2.0",
+      "BSD-2-Clause",
+      "BSD-3-Clause",
+      "ISC"
+    ],
+    "deny_missing_license": true,
+    "review_required": [
+      "GPL",
+      "AGPL",
+      "LGPL",
+      "Custom"
+    ]
+  },
+  "exclusion_rules": [
+    "missing_typescript",
+    "missing_jest_signal",
+    "archived_repository",
+    "generated_tests_only",
+    "snapshot_only_tests",
+    "ambiguous_source_test_pairing",
+    "blocked_or_missing_license"
+  ],
+  "captured_metadata_fields": [
+    "full_name",
+    "html_url",
+    "default_branch",
+    "stargazers_count",
+    "forks_count",
+    "language",
+    "license.spdx_id",
+    "topics",
+    "updated_at",
+    "pushed_at"
+  ]
+}
