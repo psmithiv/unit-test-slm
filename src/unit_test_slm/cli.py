@@ -16,6 +16,7 @@ from unit_test_slm.acquisition.scraper import scrape_repository
 from unit_test_slm.dataset.dedupe import deduplicate_dataset_manifest
 from unit_test_slm.dataset.manifest import build_dataset_manifest, validate_dataset_manifest
 from unit_test_slm.dataset.normalize import normalize_dataset_manifest
+from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.test_spec import validate_test_spec
 
 
@@ -113,6 +114,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     spec_parser.add_argument("--spec", type=Path, required=True)
 
+    render_parser = subparsers.add_parser(
+        "render-test-spec",
+        help="Render a TEST_SPEC document into normalized Jest code",
+    )
+    render_parser.add_argument("--spec", type=Path, required=True)
+    render_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -191,6 +199,13 @@ def main() -> int:
         if errors:
             parser.error(f"invalid TEST_SPEC: {', '.join(errors)}")
         print(json.dumps({"valid": True}, indent=2))
+        return 0
+
+    if args.command == "render-test-spec":
+        spec = json.loads(args.spec.read_text(encoding="utf-8"))
+        rendered = render_jest_test_spec(spec)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(rendered, encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
