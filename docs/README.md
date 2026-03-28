@@ -49,3 +49,7 @@ pipeline is implemented ticket by ticket.
 - `docs/runbooks/curation-runbook.md`: dataset curation workflow
 - `docs/runbooks/training-runbook.md`: baseline and adapter training workflow
 - `docs/runbooks/evaluation-runbook.md`: evaluation and reporting workflow
+
+## Release
+
+- `docs/release/v1-definition-of-done.md`: V1 acceptance bar and review gates
