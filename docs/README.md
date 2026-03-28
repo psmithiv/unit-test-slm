@@ -34,3 +34,7 @@ pipeline is implemented ticket by ticket.
 - `docs/training/adapter-finetuning.md`: reproducible adapter-based training path
 - `docs/training/artifact-versioning.md`: artifact storage and metadata convention
 - `docs/training/direct-vs-test-spec.md`: side-by-side comparison and V1 decision
+
+## Evaluation
+
+- `docs/evaluation/syntax-validation.md`: fast syntax and parse validation

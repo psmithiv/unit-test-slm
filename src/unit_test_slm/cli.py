@@ -19,6 +19,7 @@ from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
+from unit_test_slm.evaluation.syntax import evaluate_syntax
 from unit_test_slm.training.artifacts import register_training_artifacts
 from unit_test_slm.training.baseline import run_baseline_inference
 from unit_test_slm.training.compare import compare_training_paths
@@ -169,6 +170,13 @@ def build_parser() -> argparse.ArgumentParser:
     compare_parser.add_argument("--test-spec", type=Path, required=True)
     compare_parser.add_argument("--output", type=Path, required=True)
 
+    syntax_parser = subparsers.add_parser(
+        "evaluate-syntax",
+        help="Run fast syntax and parse validation on generated outputs",
+    )
+    syntax_parser.add_argument("--results", type=Path, required=True)
+    syntax_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -306,6 +314,13 @@ def main() -> int:
         comparison = compare_training_paths(direct_manifest, test_spec_manifest)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(comparison, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "evaluate-syntax":
+        result_manifest = json.loads(args.results.read_text(encoding="utf-8"))
+        syntax_report = evaluate_syntax(result_manifest)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(syntax_report, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
