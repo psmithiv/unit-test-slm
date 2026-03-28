@@ -41,3 +41,4 @@ pipeline is implemented ticket by ticket.
 - `docs/evaluation/typescript-compile-evaluation.md`: compile success evaluation
 - `docs/evaluation/jest-execution-evaluation.md`: Jest harness execution evaluation
 - `docs/evaluation/robustness-evaluation.md`: equivalent robustness signal
+- `docs/evaluation/regression-reporting.md`: standard report format and run comparisons
