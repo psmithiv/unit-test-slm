@@ -33,3 +33,4 @@ pipeline is implemented ticket by ticket.
 - `docs/training/baseline-inference.md`: untuned model benchmarking harness
 - `docs/training/adapter-finetuning.md`: reproducible adapter-based training path
 - `docs/training/artifact-versioning.md`: artifact storage and metadata convention
+- `docs/training/direct-vs-test-spec.md`: side-by-side comparison and V1 decision
