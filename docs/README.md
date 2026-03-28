@@ -23,3 +23,4 @@ pipeline is implemented ticket by ticket.
 
 - `docs/dataset/dataset-manifest-schema.md`: stable curated example manifest
 - `docs/dataset/normalization-rules.md`: deterministic source and test normalization
+- `docs/dataset/deduplication-strategy.md`: exact and near-duplicate handling

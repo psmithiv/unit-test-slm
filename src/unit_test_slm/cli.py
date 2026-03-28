@@ -13,6 +13,7 @@ from unit_test_slm.acquisition.discovery import (
 from unit_test_slm.acquisition.governance import enforce_license_policy
 from unit_test_slm.acquisition.quality import apply_quality_filter
 from unit_test_slm.acquisition.scraper import scrape_repository
+from unit_test_slm.dataset.dedupe import deduplicate_dataset_manifest
 from unit_test_slm.dataset.manifest import build_dataset_manifest, validate_dataset_manifest
 from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 
@@ -97,6 +98,14 @@ def build_parser() -> argparse.ArgumentParser:
     normalize_parser.add_argument("--manifest", type=Path, required=True)
     normalize_parser.add_argument("--output", type=Path, required=True)
 
+    dedupe_parser = subparsers.add_parser(
+        "dedupe-dataset",
+        help="Filter exact and near-duplicate curated examples",
+    )
+    dedupe_parser.add_argument("--manifest", type=Path, required=True)
+    dedupe_parser.add_argument("--output", type=Path, required=True)
+    dedupe_parser.add_argument("--near-duplicate-threshold", type=float, default=0.97)
+
     return parser
 
 
@@ -158,6 +167,15 @@ def main() -> int:
         normalized = normalize_dataset_manifest(manifest)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(normalized, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "dedupe-dataset":
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        deduped = deduplicate_dataset_manifest(
+            manifest, near_duplicate_threshold=args.near_duplicate_threshold
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(deduped, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
