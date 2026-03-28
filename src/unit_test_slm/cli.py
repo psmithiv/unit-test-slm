@@ -20,6 +20,7 @@ from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
 from unit_test_slm.training.baseline import run_baseline_inference
+from unit_test_slm.training.finetune import build_adapter_training_plan
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -141,6 +142,15 @@ def build_parser() -> argparse.ArgumentParser:
     baseline_parser.add_argument("--backend", choices=("mock", "subprocess"), default="mock")
     baseline_parser.add_argument("--runner-command", nargs="+")
 
+    finetune_parser = subparsers.add_parser(
+        "prepare-finetune-run",
+        help="Build a reproducible adapter-based training plan",
+    )
+    finetune_parser.add_argument("--config", type=Path, required=True)
+    finetune_parser.add_argument("--dataset-version", required=True)
+    finetune_parser.add_argument("--output-root", type=Path, required=True)
+    finetune_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -247,6 +257,17 @@ def main() -> int:
         args.output.write_text(
             json.dumps(baseline_results, indent=2) + "\n", encoding="utf-8"
         )
+        return 0
+
+    if args.command == "prepare-finetune-run":
+        config = json.loads(args.config.read_text(encoding="utf-8"))
+        plan = build_adapter_training_plan(
+            config,
+            dataset_version=args.dataset_version,
+            output_root=args.output_root,
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
