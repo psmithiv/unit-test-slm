@@ -14,6 +14,7 @@ from unit_test_slm.acquisition.governance import enforce_license_policy
 from unit_test_slm.acquisition.quality import apply_quality_filter
 from unit_test_slm.acquisition.scraper import scrape_repository
 from unit_test_slm.dataset.manifest import build_dataset_manifest, validate_dataset_manifest
+from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -89,6 +90,13 @@ def build_parser() -> argparse.ArgumentParser:
     dataset_parser.add_argument("--raw-manifest", type=Path, required=True)
     dataset_parser.add_argument("--output", type=Path, required=True)
 
+    normalize_parser = subparsers.add_parser(
+        "normalize-dataset",
+        help="Normalize curated dataset examples deterministically",
+    )
+    normalize_parser.add_argument("--manifest", type=Path, required=True)
+    normalize_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -143,6 +151,13 @@ def main() -> int:
             parser.error(f"invalid dataset manifest: {', '.join(errors)}")
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "normalize-dataset":
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        normalized = normalize_dataset_manifest(manifest)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(normalized, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
