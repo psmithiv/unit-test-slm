@@ -42,3 +42,10 @@ pipeline is implemented ticket by ticket.
 - `docs/evaluation/jest-execution-evaluation.md`: Jest harness execution evaluation
 - `docs/evaluation/robustness-evaluation.md`: equivalent robustness signal
 - `docs/evaluation/regression-reporting.md`: standard report format and run comparisons
+
+## Runbooks
+
+- `docs/runbooks/acquisition-runbook.md`: repository discovery and filtering workflow
+- `docs/runbooks/curation-runbook.md`: dataset curation workflow
+- `docs/runbooks/training-runbook.md`: baseline and adapter training workflow
+- `docs/runbooks/evaluation-runbook.md`: evaluation and reporting workflow
