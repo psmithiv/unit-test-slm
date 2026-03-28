@@ -25,3 +25,4 @@ pipeline is implemented ticket by ticket.
 - `docs/dataset/normalization-rules.md`: deterministic source and test normalization
 - `docs/dataset/deduplication-strategy.md`: exact and near-duplicate handling
 - `docs/dataset/test-spec-schema.md`: structured TEST_SPEC schema
+- `docs/dataset/jest-renderer.md`: deterministic rendering from TEST_SPEC to Jest
