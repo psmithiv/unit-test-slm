@@ -19,6 +19,7 @@ from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
+from unit_test_slm.training.artifacts import register_training_artifacts
 from unit_test_slm.training.baseline import run_baseline_inference
 from unit_test_slm.training.finetune import build_adapter_training_plan
 
@@ -151,6 +152,14 @@ def build_parser() -> argparse.ArgumentParser:
     finetune_parser.add_argument("--output-root", type=Path, required=True)
     finetune_parser.add_argument("--output", type=Path, required=True)
 
+    artifact_parser = subparsers.add_parser(
+        "register-artifacts",
+        help="Register versioned training artifacts for a run",
+    )
+    artifact_parser.add_argument("--training-plan", type=Path, required=True)
+    artifact_parser.add_argument("--artifact-file", action="append", dest="artifact_files", required=True)
+    artifact_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -268,6 +277,18 @@ def main() -> int:
         )
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "register-artifacts":
+        training_plan = json.loads(args.training_plan.read_text(encoding="utf-8"))
+        artifact_manifest = register_training_artifacts(
+            training_plan,
+            artifact_files=args.artifact_files,
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(artifact_manifest, indent=2) + "\n", encoding="utf-8"
+        )
         return 0
 
     parser.error(f"unsupported command: {args.command}")
