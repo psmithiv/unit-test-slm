@@ -26,3 +26,4 @@ pipeline is implemented ticket by ticket.
 - `docs/dataset/deduplication-strategy.md`: exact and near-duplicate handling
 - `docs/dataset/test-spec-schema.md`: structured TEST_SPEC schema
 - `docs/dataset/jest-renderer.md`: deterministic rendering from TEST_SPEC to Jest
+- `docs/dataset/benchmark-splits.md`: reproducible train/validation/held-out splits
