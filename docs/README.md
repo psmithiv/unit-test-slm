@@ -53,3 +53,4 @@ pipeline is implemented ticket by ticket.
 ## Release
 
 - `docs/release/v1-definition-of-done.md`: V1 acceptance bar and review gates
+- `docs/release/language-framework-extension-rules.md`: checklist for new pairs
