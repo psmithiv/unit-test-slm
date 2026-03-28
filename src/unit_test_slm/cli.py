@@ -21,6 +21,7 @@ from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
 from unit_test_slm.evaluation.compile import evaluate_compile
 from unit_test_slm.evaluation.jest import evaluate_jest_execution
+from unit_test_slm.evaluation.reporting import build_run_report, compare_run_reports
 from unit_test_slm.evaluation.robustness import evaluate_robustness
 from unit_test_slm.evaluation.syntax import evaluate_syntax
 from unit_test_slm.training.artifacts import register_training_artifacts
@@ -205,6 +206,25 @@ def build_parser() -> argparse.ArgumentParser:
     robustness_parser.add_argument("--results", type=Path, required=True)
     robustness_parser.add_argument("--output", type=Path, required=True)
 
+    report_parser = subparsers.add_parser(
+        "build-report",
+        help="Build a standard benchmark report from evaluation manifests",
+    )
+    report_parser.add_argument("--run-label", required=True)
+    report_parser.add_argument("--syntax", type=Path)
+    report_parser.add_argument("--compile", type=Path, dest="compile_report")
+    report_parser.add_argument("--jest", type=Path)
+    report_parser.add_argument("--robustness", type=Path)
+    report_parser.add_argument("--output", type=Path, required=True)
+
+    compare_reports_parser = subparsers.add_parser(
+        "compare-reports",
+        help="Compare baseline and candidate benchmark reports",
+    )
+    compare_reports_parser.add_argument("--baseline", type=Path, required=True)
+    compare_reports_parser.add_argument("--candidate", type=Path, required=True)
+    compare_reports_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -378,6 +398,29 @@ def main() -> int:
         robustness_report = evaluate_robustness(result_manifest)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(robustness_report, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "build-report":
+        metric_manifests = {}
+        for name, path in (
+            ("syntax", args.syntax),
+            ("compile", args.compile_report),
+            ("jest", args.jest),
+            ("robustness", args.robustness),
+        ):
+            if path:
+                metric_manifests[name] = json.loads(path.read_text(encoding="utf-8"))
+        report = build_run_report(args.run_label, metric_manifests)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "compare-reports":
+        baseline_report = json.loads(args.baseline.read_text(encoding="utf-8"))
+        candidate_report = json.loads(args.candidate.read_text(encoding="utf-8"))
+        comparison = compare_run_reports(baseline_report, candidate_report)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(comparison, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
