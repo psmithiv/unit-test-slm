@@ -20,6 +20,7 @@ from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
 from unit_test_slm.evaluation.compile import evaluate_compile
+from unit_test_slm.evaluation.jest import evaluate_jest_execution
 from unit_test_slm.evaluation.syntax import evaluate_syntax
 from unit_test_slm.training.artifacts import register_training_artifacts
 from unit_test_slm.training.baseline import run_baseline_inference
@@ -187,6 +188,15 @@ def build_parser() -> argparse.ArgumentParser:
     compile_parser.add_argument("--backend", choices=("mock", "subprocess"), default="mock")
     compile_parser.add_argument("--checker-command", nargs="+")
 
+    jest_parser = subparsers.add_parser(
+        "evaluate-jest",
+        help="Run Jest execution evaluation on generated outputs",
+    )
+    jest_parser.add_argument("--results", type=Path, required=True)
+    jest_parser.add_argument("--output", type=Path, required=True)
+    jest_parser.add_argument("--backend", choices=("mock", "subprocess"), default="mock")
+    jest_parser.add_argument("--harness-command", nargs="+")
+
     return parser
 
 
@@ -342,6 +352,17 @@ def main() -> int:
         )
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(compile_report, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "evaluate-jest":
+        result_manifest = json.loads(args.results.read_text(encoding="utf-8"))
+        execution_report = evaluate_jest_execution(
+            result_manifest,
+            backend=args.backend,
+            harness_command=args.harness_command,
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(execution_report, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
