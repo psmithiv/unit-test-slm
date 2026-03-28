@@ -31,3 +31,4 @@ pipeline is implemented ticket by ticket.
 ## Training
 
 - `docs/training/baseline-inference.md`: untuned model benchmarking harness
+- `docs/training/adapter-finetuning.md`: reproducible adapter-based training path
