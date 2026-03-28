@@ -21,6 +21,7 @@ from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
 from unit_test_slm.training.artifacts import register_training_artifacts
 from unit_test_slm.training.baseline import run_baseline_inference
+from unit_test_slm.training.compare import compare_training_paths
 from unit_test_slm.training.finetune import build_adapter_training_plan
 
 
@@ -160,6 +161,14 @@ def build_parser() -> argparse.ArgumentParser:
     artifact_parser.add_argument("--artifact-file", action="append", dest="artifact_files", required=True)
     artifact_parser.add_argument("--output", type=Path, required=True)
 
+    compare_parser = subparsers.add_parser(
+        "compare-training-paths",
+        help="Compare direct generation and TEST_SPEC training results",
+    )
+    compare_parser.add_argument("--direct", type=Path, required=True)
+    compare_parser.add_argument("--test-spec", type=Path, required=True)
+    compare_parser.add_argument("--output", type=Path, required=True)
+
     return parser
 
 
@@ -289,6 +298,14 @@ def main() -> int:
         args.output.write_text(
             json.dumps(artifact_manifest, indent=2) + "\n", encoding="utf-8"
         )
+        return 0
+
+    if args.command == "compare-training-paths":
+        direct_manifest = json.loads(args.direct.read_text(encoding="utf-8"))
+        test_spec_manifest = json.loads(args.test_spec.read_text(encoding="utf-8"))
+        comparison = compare_training_paths(direct_manifest, test_spec_manifest)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(comparison, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
