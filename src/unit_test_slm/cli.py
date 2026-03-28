@@ -17,6 +17,7 @@ from unit_test_slm.dataset.dedupe import deduplicate_dataset_manifest
 from unit_test_slm.dataset.manifest import build_dataset_manifest, validate_dataset_manifest
 from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 from unit_test_slm.dataset.renderer import render_jest_test_spec
+from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
 
 
@@ -121,6 +122,14 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("--spec", type=Path, required=True)
     render_parser.add_argument("--output", type=Path, required=True)
 
+    split_parser = subparsers.add_parser(
+        "freeze-splits",
+        help="Assign reproducible train/validation/held-out splits",
+    )
+    split_parser.add_argument("--manifest", type=Path, required=True)
+    split_parser.add_argument("--output", type=Path, required=True)
+    split_parser.add_argument("--split-version", default="v1")
+
     return parser
 
 
@@ -206,6 +215,13 @@ def main() -> int:
         rendered = render_jest_test_spec(spec)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered, encoding="utf-8")
+        return 0
+
+    if args.command == "freeze-splits":
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        frozen = freeze_benchmark_splits(manifest, split_version=args.split_version)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(frozen, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
