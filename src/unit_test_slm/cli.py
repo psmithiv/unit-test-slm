@@ -19,6 +19,7 @@ from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
+from unit_test_slm.training.baseline import run_baseline_inference
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -130,6 +131,16 @@ def build_parser() -> argparse.ArgumentParser:
     split_parser.add_argument("--output", type=Path, required=True)
     split_parser.add_argument("--split-version", default="v1")
 
+    baseline_parser = subparsers.add_parser(
+        "run-baseline",
+        help="Run baseline inference for candidate base models",
+    )
+    baseline_parser.add_argument("--model-id", required=True)
+    baseline_parser.add_argument("--prompts", type=Path, required=True)
+    baseline_parser.add_argument("--output", type=Path, required=True)
+    baseline_parser.add_argument("--backend", choices=("mock", "subprocess"), default="mock")
+    baseline_parser.add_argument("--runner-command", nargs="+")
+
     return parser
 
 
@@ -222,6 +233,20 @@ def main() -> int:
         frozen = freeze_benchmark_splits(manifest, split_version=args.split_version)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(frozen, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "run-baseline":
+        prompt_manifest = json.loads(args.prompts.read_text(encoding="utf-8"))
+        baseline_results = run_baseline_inference(
+            prompt_manifest,
+            model_id=args.model_id,
+            backend=args.backend,
+            command=args.runner_command,
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(baseline_results, indent=2) + "\n", encoding="utf-8"
+        )
         return 0
 
     parser.error(f"unsupported command: {args.command}")
