@@ -38,3 +38,4 @@ pipeline is implemented ticket by ticket.
 ## Evaluation
 
 - `docs/evaluation/syntax-validation.md`: fast syntax and parse validation
+- `docs/evaluation/typescript-compile-evaluation.md`: compile success evaluation
