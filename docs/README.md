@@ -39,3 +39,4 @@ pipeline is implemented ticket by ticket.
 
 - `docs/evaluation/syntax-validation.md`: fast syntax and parse validation
 - `docs/evaluation/typescript-compile-evaluation.md`: compile success evaluation
+- `docs/evaluation/jest-execution-evaluation.md`: Jest harness execution evaluation
