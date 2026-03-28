@@ -16,6 +16,7 @@ from unit_test_slm.acquisition.scraper import scrape_repository
 from unit_test_slm.dataset.dedupe import deduplicate_dataset_manifest
 from unit_test_slm.dataset.manifest import build_dataset_manifest, validate_dataset_manifest
 from unit_test_slm.dataset.normalize import normalize_dataset_manifest
+from unit_test_slm.dataset.test_spec import validate_test_spec
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -106,6 +107,12 @@ def build_parser() -> argparse.ArgumentParser:
     dedupe_parser.add_argument("--output", type=Path, required=True)
     dedupe_parser.add_argument("--near-duplicate-threshold", type=float, default=0.97)
 
+    spec_parser = subparsers.add_parser(
+        "validate-test-spec",
+        help="Validate a TEST_SPEC document against the current schema",
+    )
+    spec_parser.add_argument("--spec", type=Path, required=True)
+
     return parser
 
 
@@ -176,6 +183,14 @@ def main() -> int:
         )
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(deduped, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "validate-test-spec":
+        spec = json.loads(args.spec.read_text(encoding="utf-8"))
+        errors = validate_test_spec(spec)
+        if errors:
+            parser.error(f"invalid TEST_SPEC: {', '.join(errors)}")
+        print(json.dumps({"valid": True}, indent=2))
         return 0
 
     parser.error(f"unsupported command: {args.command}")
