@@ -19,6 +19,7 @@ from unit_test_slm.dataset.normalize import normalize_dataset_manifest
 from unit_test_slm.dataset.renderer import render_jest_test_spec
 from unit_test_slm.dataset.splits import freeze_benchmark_splits
 from unit_test_slm.dataset.test_spec import validate_test_spec
+from unit_test_slm.evaluation.compile import evaluate_compile
 from unit_test_slm.evaluation.syntax import evaluate_syntax
 from unit_test_slm.training.artifacts import register_training_artifacts
 from unit_test_slm.training.baseline import run_baseline_inference
@@ -177,6 +178,15 @@ def build_parser() -> argparse.ArgumentParser:
     syntax_parser.add_argument("--results", type=Path, required=True)
     syntax_parser.add_argument("--output", type=Path, required=True)
 
+    compile_parser = subparsers.add_parser(
+        "evaluate-compile",
+        help="Run compile validation on generated outputs",
+    )
+    compile_parser.add_argument("--results", type=Path, required=True)
+    compile_parser.add_argument("--output", type=Path, required=True)
+    compile_parser.add_argument("--backend", choices=("mock", "subprocess"), default="mock")
+    compile_parser.add_argument("--checker-command", nargs="+")
+
     return parser
 
 
@@ -321,6 +331,17 @@ def main() -> int:
         syntax_report = evaluate_syntax(result_manifest)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(syntax_report, indent=2) + "\n", encoding="utf-8")
+        return 0
+
+    if args.command == "evaluate-compile":
+        result_manifest = json.loads(args.results.read_text(encoding="utf-8"))
+        compile_report = evaluate_compile(
+            result_manifest,
+            backend=args.backend,
+            checker_command=args.checker_command,
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(compile_report, indent=2) + "\n", encoding="utf-8")
         return 0
 
     parser.error(f"unsupported command: {args.command}")
